@@ -1,4 +1,4 @@
-package com.amoy.zhp.splearning.com.amoy.zhp.test;
+package com.amoy.zhp.splearning.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
