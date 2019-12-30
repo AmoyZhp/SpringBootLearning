@@ -2,6 +2,8 @@ package com.amoy.zhp.splearning.controller;
 
 import com.amoy.zhp.splearning.dto.AccessTokenDto;
 import com.amoy.zhp.splearning.dto.GithubUserDto;
+import com.amoy.zhp.splearning.mapper.UserMapper;
+import com.amoy.zhp.splearning.model.User;
 import com.amoy.zhp.splearning.provider.GithubProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,6 +28,9 @@ public class AuthorizeController {
     @Value("${github.redirect_uri}")
     private String github_uri;
 
+    @Autowired
+    private UserMapper user_mapper;
+
     @GetMapping("/callback")
     public String callback(@RequestParam(name = "code") String code,
                            @RequestParam(name = "state") String state,
@@ -41,6 +46,13 @@ public class AuthorizeController {
         System.out.println("access_token is : " + access_token);
         GithubUserDto github_user = gihub_provider.getGithubUser(access_token);
         if(github_user != null){
+            User user = new User();
+            user.setAccount_id(String.valueOf(github_user.getId()));
+            user.setToken(access_token);
+            user.setGmt_created(System.currentTimeMillis());
+            user.setGmt_modified(user.getGmt_created());
+            user.setName("test");
+            user_mapper.inserUser(user);
             request.getSession().setAttribute("github_user", github_user);
             return "redirect:/";
         } else {
