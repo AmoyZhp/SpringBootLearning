@@ -1,5 +1,8 @@
 package com.amoy.zhp.splearning.model;
 
+import lombok.Data;
+
+@Data
 public class User {
     private Integer id;
     private String account_id;
@@ -7,52 +10,5 @@ public class User {
     private String token;
     private Long gmt_created;
     private Long gmt_modified;
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getAccount_id() {
-        return account_id;
-    }
-
-    public void setAccount_id(String account_id) {
-        this.account_id = account_id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getToken() {
-        return token;
-    }
-
-    public void setToken(String token) {
-        this.token = token;
-    }
-
-    public Long getGmt_created() {
-        return gmt_created;
-    }
-
-    public void setGmt_created(Long gmt_created) {
-        this.gmt_created = gmt_created;
-    }
-
-    public Long getGmt_modified() {
-        return gmt_modified;
-    }
-
-    public void setGmt_modified(Long gmt_modified) {
-        this.gmt_modified = gmt_modified;
-    }
+    private String avatar_url;
 }
