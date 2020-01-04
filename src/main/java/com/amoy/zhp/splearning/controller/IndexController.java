@@ -29,7 +29,7 @@ public class IndexController {
             for(Cookie cookie : cookies){
                 if(cookie.getName().equals("token")){
                     String token = cookie.getValue();
-                    User user = userMapper.find_user_by_token(token);
+                    User user = userMapper.getUserByToken(token);
                     if(user != null){
                         request.getSession().setAttribute("github_user",user);
                     }

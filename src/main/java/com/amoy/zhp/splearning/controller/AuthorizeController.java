@@ -37,25 +37,24 @@ public class AuthorizeController {
                            @RequestParam(name = "state") String state,
                            HttpServletRequest request,
                            HttpServletResponse response){
-
         AccessTokenDto accessTokenDto = new AccessTokenDto();
-        accessTokenDto.setClient_id(githubClientId);
-        accessTokenDto.setClient_secret(githubClientSecret);
+        accessTokenDto.setClientId(githubClientId);
+        accessTokenDto.setClientSecret(githubClientSecret);
         accessTokenDto.setCode(code);
-        accessTokenDto.setRedirect_uri(githubUri);
+        accessTokenDto.setRedirectUri(githubUri);
         accessTokenDto.setState(state);
         String accessToken = githubProvider.getAccessToken(accessTokenDto);
-        GithubUserDto github_user = githubProvider.getGithubUser(accessToken);
-        if(github_user != null){
+        GithubUserDto githubUser = githubProvider.getGithubUser(accessToken);
+        if(githubUser != null){
             User user = new User();
             String token = UUID.randomUUID().toString();
-            user.setAccount_id(String.valueOf(github_user.getId()));
+            user.setAccountId(String.valueOf(githubUser.getId()));
             user.setToken(token);
-            user.setGmt_created(System.currentTimeMillis());
-            user.setGmt_modified(user.getGmt_created());
+            user.setGmtCreated(System.currentTimeMillis());
+            user.setGmtModified(user.getGmtCreated());
             user.setName("test");
-            System.out.println("github user avatar url is " + github_user.getAvatar_url());
-            user.setAvatar_url(github_user.getAvatar_url());
+            System.out.println("github user avatar url is " + githubUser.getAvatarUrl());
+            user.setAvatarUrl(githubUser.getAvatarUrl());
             userMapper.inserUser(user);
             Cookie cookie = new Cookie("token", token);
             cookie.setMaxAge(24 * 60 * 60);

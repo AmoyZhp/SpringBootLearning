@@ -7,10 +7,10 @@ public class Question {
     private int id;
     private String title;
     private String description;
-    private int creator_id;
-    private int comment_count;
-    private int view_count;
-    private int like_count;
-    private long gmt_created;
-    private long gmt_modified;
+    private int creatorId;
+    private int commentCount;
+    private int viewCount;
+    private int likeCount;
+    private long gmtCreated;
+    private long gmtModified;
 }

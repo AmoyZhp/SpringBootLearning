@@ -5,7 +5,6 @@ import com.amoy.zhp.splearning.mapper.QuestionMapper;
 import com.amoy.zhp.splearning.mapper.UserMapper;
 import com.amoy.zhp.splearning.model.Question;
 import com.amoy.zhp.splearning.model.User;
-import org.omg.PortableInterceptor.SYSTEM_EXCEPTION;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,12 +25,12 @@ public class QuestionService {
         List<QuestionDto> questionDtoList = new ArrayList<>();
         List<Question> questionList = questionMapper.listQuestion();
         for(Question question : questionList){
-            int user_id = question.getCreator_id();
-            User user = userMapper.gerUserById(user_id);
-            QuestionDto question_dto = new QuestionDto();
-            BeanUtils.copyProperties(question, question_dto);
-            question_dto.setUser(user);
-            questionDtoList.add(question_dto);
+            int userId = question.getCreatorId();
+            User user = userMapper.gerUserById(userId);
+            QuestionDto questionDto = new QuestionDto();
+            BeanUtils.copyProperties(question, questionDto);
+            questionDto.setUser(user);
+            questionDtoList.add(questionDto);
         }
         return questionDtoList;
     }

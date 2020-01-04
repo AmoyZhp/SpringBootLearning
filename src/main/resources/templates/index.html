@@ -28,7 +28,7 @@
                 <a class="nav-link" href="/publish">Publish</a>
             </li>
             <li class="nav-item" th:if="${session.github_user == null}">
-                <a class="nav-link" href="https://github.com/login/oauth/authorize?client_id=288e66d15e390de95b2d&redirect_uri=http://127.0.0.1:8887/callback/&scope=user&state=dcsa123svc">Log in</a>
+                <a class="nav-link" href="https://github.com/login/oauth/authorize?client_id=288e66d15e390de95b2d&redirect_uri=http://127.0.0.1:8886/callback/&scope=user&state=dcsa123svc">Log in</a>
             </li>
             <li class="nav-item dropdown" th:if="${session.github_user != null}">
                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown"
@@ -52,13 +52,13 @@
             <ul class="list-group" th:each="question : ${questionList}">
                 <li class="list-group-item">
                     <div class="media">
-                        <img th:src="${question.user.avatar_url}" class="meta-object img-thumbnail">
+                        <img th:src="${question.user.avatarUrl}" class="meta-object img-thumbnail">
                         <div class="media-body">
                             <h5 class="mt-0" th:text="${question.title}"></h5>
                             <p th:text="${question.description}"></p>
-                            Comment Count: <span th:text="${question.comment_count}"></span>
-                            View Count: <span th:text="${question.view_count}"></span>
-                            Date: <span th:text="${#dates.format(question.gmt_created, 'dd MMMM yyyy')}"></span>
+                            Comment Count: <span th:text="${question.commentCount}"></span>
+                            View Count: <span th:text="${question.viewCount}"></span>
+                            Date: <span th:text="${#dates.format(question.gmtCreated, 'dd MMMM yyyy')}"></span>
                         </div>
                     </div>
                 </li>
