@@ -9,3 +9,8 @@ body{
     float: right;
     margin-bottom: 15px;
 }
+
+.meta-object{
+    width: 64px;
+    height: 64px;
+}
