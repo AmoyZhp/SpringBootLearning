@@ -1,5 +1,6 @@
 package com.amoy.zhp.splearning.controller;
 
+import com.amoy.zhp.splearning.dto.PagesInfoDTO;
 import com.amoy.zhp.splearning.dto.QuestionDto;
 import com.amoy.zhp.splearning.mapper.UserMapper;
 import com.amoy.zhp.splearning.model.User;
@@ -8,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -23,7 +25,8 @@ public class IndexController {
     private QuestionService questionService;
 
     @GetMapping("/")
-    public String index(HttpServletRequest request, Model model){
+    public String index(HttpServletRequest request, Model model,
+                        @RequestParam(value = "page", required = false, defaultValue = "1") int page){
         Cookie[] cookies = request.getCookies();
         if( cookies != null){
             for(Cookie cookie : cookies){
@@ -37,9 +40,10 @@ public class IndexController {
                 }
             }
         }
-        List<QuestionDto> questionDtoList = new ArrayList<>();
-        questionDtoList = questionService.listQuestions();
-        model.addAttribute("questionList",questionDtoList);
+        PagesInfoDTO pagesInfoDTO = questionService.listPage(page, 5);
+//        List<QuestionDto> questionDtoList = new ArrayList<>();
+//        questionDtoList = questionService.listQuestions();
+        model.addAttribute("pagination",pagesInfoDTO);
         return "index";
     }
 }
