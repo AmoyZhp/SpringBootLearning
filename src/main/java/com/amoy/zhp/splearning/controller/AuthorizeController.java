@@ -46,23 +46,38 @@ public class AuthorizeController {
         String accessToken = githubProvider.getAccessToken(accessTokenDto);
         GithubUserDto githubUser = githubProvider.getGithubUser(accessToken);
         if(githubUser != null){
-            User user = new User();
+            User user = userMapper.getUserByAccountId(githubUser.getId());
             String token = UUID.randomUUID().toString();
-            user.setAccountId(String.valueOf(githubUser.getId()));
-            user.setToken(token);
-            user.setGmtCreated(System.currentTimeMillis());
-            user.setGmtModified(user.getGmtCreated());
-            user.setName("test");
-            System.out.println("github user avatar url is " + githubUser.getAvatarUrl());
-            user.setAvatarUrl(githubUser.getAvatarUrl());
-            userMapper.inserUser(user);
+            if( user != null){
+                userMapper.setUserTokenById(token, user.getId());
+                user.setToken(token);
+            } else {
+                token = UUID.randomUUID().toString();
+                user.setAccountId(String.valueOf(githubUser.getId()));
+                user.setToken(token);
+                user.setGmtCreated(System.currentTimeMillis());
+                user.setGmtModified(user.getGmtCreated());
+                user.setName("test");
+                System.out.println("github user avatar url is " + githubUser.getAvatarUrl());
+                user.setAvatarUrl(githubUser.getAvatarUrl());
+                userMapper.inserUser(user);
+            }
             Cookie cookie = new Cookie("token", token);
             cookie.setMaxAge(24 * 60 * 60);
             cookie.setPath("/");
             response.addCookie(cookie);
-            return "redirect:/";
-        } else {
-            return "redirect:/";
         }
+        return "redirect:/";
+    }
+
+    @GetMapping("/logout")
+    public String logout(HttpServletRequest request){
+        Object userObj = request.getSession().getAttribute("user");
+        if(userObj != null){
+            User user = (User) userObj;
+            userMapper.setUserTokenById("", user.getId());
+            request.getSession().removeAttribute("user");
+        }
+        return "redirect:/";
     }
 }

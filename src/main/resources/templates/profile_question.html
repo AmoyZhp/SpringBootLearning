@@ -14,7 +14,7 @@
 <div class="container main">
     <div class="row">
         <div class="col-lg-9">
-            <h2>Question</h2>
+            <h2>My Question</h2>
             <hr>
             <ul class="list-group" th:each="question : ${pagination.questionList}">
                 <li class="list-group-item">
@@ -32,35 +32,33 @@
             </ul>
             <ul class="pagination">
                 <li class="page-item">
-                    <a class="page-link" href="/?page=1" aria-label="Previous">
+                    <a class="page-link" href="/profile/question?page=1" aria-label="Previous">
                         <span aria-hidden="true">&laquo;</span>
                     </a>
                 </li>
                 <li class="page-item">
-                    <a class="page-link" th:href="@{/(page=${pagination.currentPage - 1})}" aria-label="Previous">
+                    <a class="page-link" th:href="@{/profile/question(page=${pagination.currentPage - 1})}" aria-label="Previous">
                         <span aria-hidden="true">&lt;</span>
                     </a>
                 </li>
                 <li th:each="page : ${pagination.pages}" th:class="${page == pagination.currentPage} ? 'active' : '' ">
-                    <a class="page-link" th:href="@{/(page=${page})}" th:text="${page}"></a>
+                    <a class="page-link" th:href="@{/profile/question(page=${page})}" th:text="${page}"></a>
                 </li>
                 <li class="page-item">
-                    <a class="page-link" th:href="@{/(page=${pagination.currentPage + 1})}" aria-label="Next">
+                    <a class="page-link" th:href="@{/profile/question(page=${pagination.currentPage + 1})}" aria-label="Next">
                         <span aria-hidden="true">&gt;</span>
                     </a>
                 </li>
                 <li class="page-item">
-                    <a class="page-link" th:href="@{/(page=${pagination.totalPagesCount})}" aria-label="Next">
+                    <a class="page-link" th:href="@{/profile/question(page=${pagination.totalPagesCount})}" aria-label="Next">
                         <span aria-hidden="true">&raquo;</span>
                     </a>
                 </li>
             </ul>
         </div>
         <div class="col-lg-3">
-            <h3>Tutorial</h3>
-            <p>
-                Nothing to say now.
-            </p>
+            <div th:insert="~{navigation :: profile_rigth_nav}">
+            </div>
         </div>
     </div>
 </div>

@@ -46,21 +46,12 @@ public class PublishController {
         }
         model.addAttribute("description", description);
 
-        Cookie[] cookies = request.getCookies();
-        User user = null;
-        if( cookies != null){
-            for(Cookie cookie : cookies){
-                if(cookie.getName().equals("token")){
-                    String token = cookie.getValue();
-                    user = user_mapper.getUserByToken(token);
-                    break;
-                }
-            }
-        }
-        if( user == null){
+        Object userObj = request.getSession().getAttribute("user");
+        if( userObj == null){
             model.addAttribute("error", " please log in first");
             return "publish";
         } else {
+            User user = (User)userObj;
             Question question = new Question();
             question.setTitle(title);
             question.setDescription(description);

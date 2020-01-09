@@ -14,18 +14,28 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
 @Controller
-public class IndexController {
+public class ProfileController {
+
     @Autowired
     private UserMapper userMapper;
 
     @Autowired
     private QuestionService questionService;
 
-    @GetMapping("/")
-    public String index(HttpServletRequest request, Model model,
-                        @RequestParam(value = "page", required = false, defaultValue = "1") int page){
-        PagesInfoDTO pagesInfoDTO = questionService.listPage(page, 5);
+    @GetMapping("/profile/question")
+    public String profileQuestion(HttpServletRequest request,
+                                  Model model,
+                                  @RequestParam(value = "page", defaultValue = "1") int page){
+        Object userObj = request.getSession().getAttribute("user");
+        User user;
+        if(userObj != null){
+            user = (User)userObj;
+        } else {
+            return "redirect:/";
+        }
+        PagesInfoDTO pagesInfoDTO = questionService.listPage(page, 5, user.getId());
         model.addAttribute("pagination",pagesInfoDTO);
-        return "index";
+        return "profile_question";
     }
+
 }
