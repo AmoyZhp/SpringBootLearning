@@ -21,7 +21,9 @@
                     <div class="media">
                         <img th:src="${question.user.avatarUrl}" class="meta-object img-thumbnail">
                         <div class="media-body">
-                            <h5 class="mt-0" th:text="${question.title}"></h5>
+                            <h5 class="mt-0">
+                                <a th:href="@{'/question/' + ${question.id} }" th:text="${question.title}"></a>
+                            </h5>
                             <p th:text="${question.description}"></p>
                             Comment Count: <span th:text="${question.commentCount}"></span>
                             View Count: <span th:text="${question.viewCount}"></span>

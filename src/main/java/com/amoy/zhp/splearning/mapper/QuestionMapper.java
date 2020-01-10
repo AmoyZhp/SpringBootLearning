@@ -1,9 +1,7 @@
 package com.amoy.zhp.splearning.mapper;
 
 import com.amoy.zhp.splearning.model.Question;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.*;
 
 import java.util.List;
 
@@ -13,6 +11,11 @@ public interface QuestionMapper {
     @Insert("INSERT INTO QUESTION (title, description, creator_id, gmt_created, gmt_modified) " +
             "VALUES (#{title}, #{description}, #{creatorId}, #{gmtCreated}, #{gmtModified})")
     void insertQuestion(Question question);
+
+
+    @Update("UPDATE QUESTION SET title = #{title}, description = #{description}, gmt_modified = #{gmtModified} " +
+            "WHERE id = #{id} ")
+    void updateQuestion(Question question);
 
     @Select("SELECT * FROM QUESTION")
     List<Question> listAllQuestion();
@@ -29,6 +32,6 @@ public interface QuestionMapper {
     @Select("SELECT COUNT(1) FROM QUESTION WHERE CREATOR_ID = #{userId}")
     int countByUserId(int userId);
 
-
-
+    @Select("SELECT * FROM QUESTION WHERE id = #{questionId}")
+    Question getQuestionById(@Param("questionId") int questionId);
 }

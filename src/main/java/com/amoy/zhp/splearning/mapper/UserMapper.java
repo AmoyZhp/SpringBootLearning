@@ -10,8 +10,8 @@ public interface UserMapper {
     void inserUser(User user);
 
 
-    @Update("UPDATE USER SET token = #{token} WHERE id = #{userId}")
-    void setUserTokenById(String token,int userId);
+    @Update("UPDATE USER SET token = #{token} , gmt_modified = #{gmtModified} WHERE id = #{userId}")
+    void setUserTokenById(String token,int userId, long gmtModified);
 
     @Select("SELECT * FROM USER WHERE account_id = #{accountId}")
     User getUserByAccountId(@Param("accountId") long accountId);
@@ -20,6 +20,10 @@ public interface UserMapper {
     User getUserByToken(@Param("token") String token);
 
     @Select("SELECT * FROM USER WHERE id = #{userId}")
-    User gerUserById(@Param("userId") int userId);
+    User getUserById(@Param("userId") int userId);
 
+    @Update("UPDATE USER SET token = #{token}, gmt_modified = #{gmtModified}, name = #{name}, " +
+            "avatar_url = #{avatarUrl}, account_id = #{accountId} " +
+            "WHERE id = #{userId}")
+    void setUser(User user);
 }

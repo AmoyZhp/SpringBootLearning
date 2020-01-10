@@ -1,7 +1,9 @@
 package com.amoy.zhp.splearning.dto;
 
+import com.amoy.zhp.splearning.model.Question;
 import com.amoy.zhp.splearning.model.User;
 import lombok.Data;
+import org.springframework.beans.BeanUtils;
 
 @Data
 public class QuestionDto {
@@ -15,4 +17,8 @@ public class QuestionDto {
     private long gmtCreated;
     private long gmtModified;
     private User user;
+
+    public void setQuestion(Question question){
+        BeanUtils.copyProperties(question, this);
+    }
 }

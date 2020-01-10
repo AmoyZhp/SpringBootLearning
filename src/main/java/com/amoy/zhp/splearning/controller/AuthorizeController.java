@@ -5,6 +5,7 @@ import com.amoy.zhp.splearning.dto.GithubUserDto;
 import com.amoy.zhp.splearning.mapper.UserMapper;
 import com.amoy.zhp.splearning.model.User;
 import com.amoy.zhp.splearning.provider.GithubProvider;
+import com.amoy.zhp.splearning.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -32,6 +33,9 @@ public class AuthorizeController {
     @Autowired
     private UserMapper userMapper;
 
+    @Autowired
+    private UserService userService;
+
     @GetMapping("/callback")
     public String callback(@RequestParam(name = "code") String code,
                            @RequestParam(name = "state") String state,
@@ -49,7 +53,7 @@ public class AuthorizeController {
             User user = userMapper.getUserByAccountId(githubUser.getId());
             String token = UUID.randomUUID().toString();
             if( user != null){
-                userMapper.setUserTokenById(token, user.getId());
+                userMapper.setUserTokenById(token, user.getId(), System.currentTimeMillis());
                 user.setToken(token);
             } else {
                 token = UUID.randomUUID().toString();
@@ -63,7 +67,7 @@ public class AuthorizeController {
                 userMapper.inserUser(user);
             }
             Cookie cookie = new Cookie("token", token);
-            cookie.setMaxAge(24 * 60 * 60);
+            cookie.setMaxAge(60 * 60);
             cookie.setPath("/");
             response.addCookie(cookie);
         }
@@ -71,12 +75,16 @@ public class AuthorizeController {
     }
 
     @GetMapping("/logout")
-    public String logout(HttpServletRequest request){
+    public String logout(HttpServletRequest request, HttpServletResponse response){
         Object userObj = request.getSession().getAttribute("user");
         if(userObj != null){
             User user = (User) userObj;
-            userMapper.setUserTokenById("", user.getId());
+            userMapper.setUserTokenById("", user.getId(), System.currentTimeMillis());
             request.getSession().removeAttribute("user");
+            Cookie cookie = new Cookie("token", null);
+            cookie.setMaxAge(0);
+            cookie.setPath("/");
+            response.addCookie(cookie);
         }
         return "redirect:/";
     }
