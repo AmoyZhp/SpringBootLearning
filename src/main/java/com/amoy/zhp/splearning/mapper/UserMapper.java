@@ -24,6 +24,6 @@ public interface UserMapper {
 
     @Update("UPDATE USER SET token = #{token}, gmt_modified = #{gmtModified}, name = #{name}, " +
             "avatar_url = #{avatarUrl}, account_id = #{accountId} " +
-            "WHERE id = #{userId}")
+            "WHERE id = #{id}")
     void setUser(User user);
 }

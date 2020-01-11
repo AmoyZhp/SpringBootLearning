@@ -128,7 +128,7 @@ public class QuestionService {
         return pageInfoDTO;
     }
 
-    public QuestionDto getQuestionById(int questionId) {
+    public QuestionDto getQuestionDtoById(int questionId) {
         QuestionDto questionDto = new QuestionDto();
         Question question = questionMapper.getQuestionById(questionId);
         questionDto.setQuestion(question);
@@ -137,5 +137,14 @@ public class QuestionService {
             questionDto.setUser(user);
         }
         return questionDto;
+    }
+
+
+    public void createQuestion(Question question) {
+        questionMapper.insertQuestion(question);
+    }
+
+    public void updateQuestion(Question question) {
+        questionMapper.updateQuestion(question);
     }
 }

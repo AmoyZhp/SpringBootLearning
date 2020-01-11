@@ -20,12 +20,6 @@ import javax.servlet.http.HttpServletRequest;
 public class PublishController {
 
     @Autowired
-    private UserMapper user_mapper;
-
-    @Autowired
-    private QuestionMapper questionMapper;
-
-    @Autowired
     private QuestionService questionService;
 
     @GetMapping("/publish")
@@ -37,7 +31,7 @@ public class PublishController {
     public String edit(@PathVariable(name = "questionId", required = false) int questionId,
                        HttpServletRequest request,
                        Model model){
-        QuestionDto questionDto = questionService.getQuestionById(questionId);
+        QuestionDto questionDto = questionService.getQuestionDtoById(questionId);
         Object userObj = request.getSession().getAttribute("user");
         if(userObj != null){
             User user = (User) userObj;
@@ -58,7 +52,6 @@ public class PublishController {
             @RequestParam(value = "questionId", required = false, defaultValue = "-1") int questionId,
             HttpServletRequest request,
             Model model){
-        System.out.println("title is " + title);
         if(title == null || title == ""){
             model.addAttribute("error","title should not be empty");
             return "publish";
@@ -76,14 +69,16 @@ public class PublishController {
             return "publish";
         } else {
             User user = (User)userObj;
-            System.out.println("quesion id is " + questionId);
             if(questionId != -1){
-                Question question = questionMapper.getQuestionById(questionId);
-                if(question.getCreatorId() == user.getId()){
+                QuestionDto questionDto = questionService.getQuestionDtoById(questionId);
+                if(questionDto.getCreatorId() == user.getId()){
+                    System.out.println("creator id is equal to user id");
+                    Question question = new Question();
+                    question.setId(questionDto.getId());
                     question.setTitle(title);
                     question.setDescription(description);
                     question.setGmtModified(System.currentTimeMillis());
-                    questionMapper.updateQuestion(question);
+                    questionService.updateQuestion(question);
                 }
             } else {
                 Question question = new Question();
@@ -92,7 +87,7 @@ public class PublishController {
                 question.setCreatorId(user.getId());
                 question.setGmtCreated(System.currentTimeMillis());
                 question.setGmtModified(question.getGmtCreated());
-                questionMapper.insertQuestion(question);
+                questionService.createQuestion(question);
             }
             return "redirect:/";
         }

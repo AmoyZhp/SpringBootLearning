@@ -31,9 +31,6 @@ public class AuthorizeController {
     private String githubUri;
 
     @Autowired
-    private UserMapper userMapper;
-
-    @Autowired
     private UserService userService;
 
     @GetMapping("/callback")
@@ -50,23 +47,12 @@ public class AuthorizeController {
         String accessToken = githubProvider.getAccessToken(accessTokenDto);
         GithubUserDto githubUser = githubProvider.getGithubUser(accessToken);
         if(githubUser != null){
-            User user = userMapper.getUserByAccountId(githubUser.getId());
-            String token = UUID.randomUUID().toString();
-            if( user != null){
-                userMapper.setUserTokenById(token, user.getId(), System.currentTimeMillis());
-                user.setToken(token);
-            } else {
-                token = UUID.randomUUID().toString();
-                user.setAccountId(String.valueOf(githubUser.getId()));
-                user.setToken(token);
-                user.setGmtCreated(System.currentTimeMillis());
-                user.setGmtModified(user.getGmtCreated());
-                user.setName("test");
-                System.out.println("github user avatar url is " + githubUser.getAvatarUrl());
-                user.setAvatarUrl(githubUser.getAvatarUrl());
-                userMapper.inserUser(user);
+            User user = userService.createUserByGithubUser(githubUser);
+            // if user == null means that there is a github user exist
+            if( user == null){
+                user = userService.updateUserByGithubUser(githubUser);
             }
-            Cookie cookie = new Cookie("token", token);
+            Cookie cookie = new Cookie("token", user.getToken());
             cookie.setMaxAge(60 * 60);
             cookie.setPath("/");
             response.addCookie(cookie);
@@ -79,7 +65,9 @@ public class AuthorizeController {
         Object userObj = request.getSession().getAttribute("user");
         if(userObj != null){
             User user = (User) userObj;
-            userMapper.setUserTokenById("", user.getId(), System.currentTimeMillis());
+            user.setToken("");
+            user.setGmtModified(System.currentTimeMillis());
+            userService.updateUser(user);
             request.getSession().removeAttribute("user");
             Cookie cookie = new Cookie("token", null);
             cookie.setMaxAge(0);
