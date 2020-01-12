@@ -5,7 +5,9 @@ import com.amoy.zhp.splearning.dto.QuestionDto;
 import com.amoy.zhp.splearning.mapper.QuestionMapper;
 import com.amoy.zhp.splearning.mapper.UserMapper;
 import com.amoy.zhp.splearning.model.Question;
+import com.amoy.zhp.splearning.model.QuestionExample;
 import com.amoy.zhp.splearning.model.User;
+import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -29,7 +31,8 @@ public class QuestionService {
 
     public PagesInfoDTO listPage(int page, int size){
 
-        int questionsCount = questionMapper.count();
+        QuestionExample questionExample = new QuestionExample();
+        int questionsCount = (int) questionMapper.countByExample(questionExample);
         int totalPagesCount = questionsCount % size == 0 ? questionsCount / size : questionsCount / size + 1;
         if(page <= 0){
             page = 1;
@@ -60,10 +63,12 @@ public class QuestionService {
     }
     public List<QuestionDto> listQuestions(int offset, int size){
         List<QuestionDto> questionDtoList = new ArrayList<>();
-        List<Question> questionList = questionMapper.listQuestion(offset, size);
+        RowBounds rowBounds = new RowBounds(offset, size);
+        QuestionExample questionExample = new QuestionExample();
+        List<Question> questionList = questionMapper.selectByExampleWithRowbounds(questionExample, rowBounds);
         for(Question question : questionList){
             int userId = question.getCreatorId();
-            User user = userMapper.getUserById(userId);
+            User user = userMapper.selectByPrimaryKey(userId);
             QuestionDto questionDto = new QuestionDto();
             BeanUtils.copyProperties(question, questionDto);
             questionDto.setUser(user);
@@ -75,13 +80,11 @@ public class QuestionService {
     private PagesInfoDTO listPageImpl(int page, int size, int userId){
         PagesInfoDTO pageInfoDTO = new PagesInfoDTO();
         int questionsCount;
-
-        if(userId == -1){
-            questionsCount = questionMapper.count();
-        } else {
-            questionsCount = questionMapper.countByUserId(userId);
+        QuestionExample questionExample = new QuestionExample();
+        if(userId != -1){
+            questionExample.createCriteria().andCreatorIdEqualTo(userId);
         }
-
+        questionsCount = (int)questionMapper.countByExample(questionExample);
         int totalPagesCount = questionsCount % size == 0 ? questionsCount / size : questionsCount / size + 1;
         if(page <= 0){
             page = 1;
@@ -93,16 +96,16 @@ public class QuestionService {
 
         List<QuestionDto> questionDtoList = new ArrayList<>();
         List<Question> questionList;
+        RowBounds rowBounds = new RowBounds(offset, size);
+        questionExample = new QuestionExample();
 
-        if(userId == -1){
-            questionList = questionMapper.listQuestion(offset, size);
-        } else {
-            questionList = questionMapper.listQuestionByUserId(offset, size, userId);
+        if(userId != -1){
+            questionExample.createCriteria().andCreatorIdEqualTo(userId);
         }
-
+        questionList = questionMapper.selectByExampleWithRowbounds(questionExample, rowBounds);
         for(Question question : questionList){
             int creatorId = question.getCreatorId();
-            User user = userMapper.getUserById(creatorId);
+            User user = userMapper.selectByPrimaryKey(creatorId);
             QuestionDto questionDto = new QuestionDto();
             BeanUtils.copyProperties(question, questionDto);
             questionDto.setUser(user);
@@ -130,9 +133,9 @@ public class QuestionService {
 
     public QuestionDto getQuestionDtoById(int questionId) {
         QuestionDto questionDto = new QuestionDto();
-        Question question = questionMapper.getQuestionById(questionId);
+        Question question = questionMapper.selectByPrimaryKey(questionId);
         questionDto.setQuestion(question);
-        User user = userMapper.getUserById(question.getCreatorId());
+        User user = userMapper.selectByPrimaryKey(question.getCreatorId());
         if(user != null){
             questionDto.setUser(user);
         }
@@ -141,10 +144,10 @@ public class QuestionService {
 
 
     public void createQuestion(Question question) {
-        questionMapper.insertQuestion(question);
+        questionMapper.insert(question);
     }
 
     public void updateQuestion(Question question) {
-        questionMapper.updateQuestion(question);
+        questionMapper.updateByPrimaryKeySelective(question);
     }
 }
