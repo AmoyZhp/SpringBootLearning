@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Question and Answer</title>
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/mine.css">
+    <script src="/js/jquery.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+</head>
+<div th:insert="~{navigation :: nav}"></div>
+<body>
+<div class="container">
+    <div class="row">
+        <div class="col-12-lg">
+            <h1> Error</h1>
+            <p th:text="${message}"></p>
+        </div>
+    </div>
+</div>
+</body>
+</html>

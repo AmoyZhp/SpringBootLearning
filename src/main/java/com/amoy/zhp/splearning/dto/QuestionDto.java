@@ -7,10 +7,10 @@ import org.springframework.beans.BeanUtils;
 
 @Data
 public class QuestionDto {
-    private int id;
+    private long id;
     private String title;
     private String description;
-    private int creatorId;
+    private long creatorId;
     private int commentCount;
     private int viewCount;
     private int likeCount;

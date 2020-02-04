@@ -1,0 +1,12 @@
+<update id="increaseViewCount" parameterType="com.amoy.zhp.splearning.model.Question">
+    update QUESTION
+    set VIEW_COUNT = VIEW_COUNT + #{viewCount,jdbcType=INTEGER}
+    where ID = #{id,jdbcType=INTEGER}
+</update>
+
+<update id="increaseCommentCount" parameterType="com.amoy.zhp.splearning.model.Question">
+    update QUESTION
+    set COMMENT_COUNT = COMMENT_COMMENT + #{commentCount,jdbcType=INTEGER}
+    where ID = #{id,jdbcType=INTEGER}
+</update>
+

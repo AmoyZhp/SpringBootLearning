@@ -2,8 +2,12 @@ package com.amoy.zhp.splearning.service;
 
 import com.amoy.zhp.splearning.dto.PagesInfoDTO;
 import com.amoy.zhp.splearning.dto.QuestionDto;
+import com.amoy.zhp.splearning.exception.CustomizeErrorCode;
+import com.amoy.zhp.splearning.exception.CustomizeException;
+import com.amoy.zhp.splearning.mapper.CommentMapper;
 import com.amoy.zhp.splearning.mapper.QuestionMapper;
 import com.amoy.zhp.splearning.mapper.UserMapper;
+import com.amoy.zhp.splearning.model.Comment;
 import com.amoy.zhp.splearning.model.Question;
 import com.amoy.zhp.splearning.model.QuestionExample;
 import com.amoy.zhp.splearning.model.User;
@@ -24,8 +28,11 @@ public class QuestionService {
     @Autowired
     private  UserMapper userMapper;
 
+    @Autowired
+    private CommentMapper commentMapper;
 
-    public PagesInfoDTO listPage(int page, int size, int userId){
+
+    public PagesInfoDTO listPage(int page, int size, long userId){
         return this.listPageImpl(page, size, userId);
     }
 
@@ -67,7 +74,7 @@ public class QuestionService {
         QuestionExample questionExample = new QuestionExample();
         List<Question> questionList = questionMapper.selectByExampleWithRowbounds(questionExample, rowBounds);
         for(Question question : questionList){
-            int userId = question.getCreatorId();
+            long userId = question.getCreatorId();
             User user = userMapper.selectByPrimaryKey(userId);
             QuestionDto questionDto = new QuestionDto();
             BeanUtils.copyProperties(question, questionDto);
@@ -77,7 +84,7 @@ public class QuestionService {
         return questionDtoList;
     }
 
-    private PagesInfoDTO listPageImpl(int page, int size, int userId){
+    private PagesInfoDTO listPageImpl(int page, int size, long userId){
         PagesInfoDTO pageInfoDTO = new PagesInfoDTO();
         int questionsCount;
         QuestionExample questionExample = new QuestionExample();
@@ -104,7 +111,7 @@ public class QuestionService {
         }
         questionList = questionMapper.selectByExampleWithRowbounds(questionExample, rowBounds);
         for(Question question : questionList){
-            int creatorId = question.getCreatorId();
+            long creatorId = question.getCreatorId();
             User user = userMapper.selectByPrimaryKey(creatorId);
             QuestionDto questionDto = new QuestionDto();
             BeanUtils.copyProperties(question, questionDto);
@@ -131,9 +138,12 @@ public class QuestionService {
         return pageInfoDTO;
     }
 
-    public QuestionDto getQuestionDtoById(int questionId) {
+    public QuestionDto getQuestionDtoById(long questionId) {
         QuestionDto questionDto = new QuestionDto();
         Question question = questionMapper.selectByPrimaryKey(questionId);
+        if(question == null){
+            throw new CustomizeException(CustomizeErrorCode.QUESTION_NOT_FOUND);
+        }
         questionDto.setQuestion(question);
         User user = userMapper.selectByPrimaryKey(question.getCreatorId());
         if(user != null){
@@ -142,6 +152,24 @@ public class QuestionService {
         return questionDto;
     }
 
+    public boolean increaseViewCount(long questionId){
+        Question question = new Question();
+        question.setId(questionId);
+        question.setViewCount(1);
+        questionMapper.increaseViewCount(question);
+        return true;
+    }
+
+    public boolean addCommentToQuestion(Comment comment){
+        Question question = questionMapper.selectByPrimaryKey(comment.getQuestionId());
+        User user = userMapper.selectByPrimaryKey(comment.getCommentorId());
+        if(question != null && user != null){
+            commentMapper.insert(comment);
+            return true;
+        } else {
+            return false;
+        }
+    }
 
     public void createQuestion(Question question) {
         questionMapper.insert(question);

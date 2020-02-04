@@ -19,6 +19,7 @@ public class QuestionController {
                            Model model){
         QuestionDto questionDto = questionService.getQuestionDtoById(questionId);
         if(questionDto != null){
+            questionService.increaseViewCount(questionId);
             model.addAttribute("question", questionDto);
             return "question";
         } else {

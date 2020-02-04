@@ -40,5 +40,8 @@
         <table tableName="Question" domainObjectName="Question" >
             <property name="useActualColumnNames" value="false"/>
         </table>
+        <table tableName="Comment" domainObjectName="Comment" >
+            <property name="useActualColumnNames" value="false"/>
+        </table>
     </context>
 </generatorConfiguration>
